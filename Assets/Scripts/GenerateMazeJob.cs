@@ -4,7 +4,7 @@ using Unity.Jobs;
 using Unity.Burst;
 
 [BurstCompile]
-public class GenerateMazeJob : IJob
+public struct GenerateMazeJob : IJob
 {
     public int Width;
     public int Height;
@@ -14,7 +14,7 @@ public class GenerateMazeJob : IJob
     /// <summary>Indicates if a cell has been visited or not.</summary>
     /// <remarks>True for visited, false for not visited.</remarks>
     public NativeArray<bool> na_CellStates;
-    public NativeArray<MazeWall> na_Walls;
+    // public NativeArray<MazeWall> na_Walls;
     /// <summary>Indicates if a wall has been broken or not.</summary>
     /// <remarks>True for broken, false for not broken.</remarks>
     public NativeArray<bool> na_WallStates;
@@ -36,7 +36,7 @@ public class GenerateMazeJob : IJob
         na_neighborDirections[3] = new int2(0, -1);
         NativeArray<int2> na_unvisitedCells = new NativeArray<int2>(4, Allocator.Temp);
 
-        int visitedCellCount = 0;
+        int visitedCellCount = 1;
         int totalCellCount = this.Width * this.Height;
 
         // add start cell as the first element in the stack
@@ -46,6 +46,7 @@ public class GenerateMazeJob : IJob
 
         while (visitedCellCount < totalCellCount)
         {
+            // UnityEngine.Debug.Log(na_cellStacks.Length);
             int2 currCell = na_cellStacks.LastElement();
 
             // check for neighbors to see if there are any unvisited cells
@@ -94,6 +95,7 @@ public class GenerateMazeJob : IJob
                 visitedCellCount++;
             } else // else, we back track
             {
+                UnityEngine.Debug.Log("Pop");
                 na_cellStacks.Pop();
             }
         }
