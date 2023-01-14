@@ -6,8 +6,8 @@ using Unity.Burst;
 [BurstCompile]
 public class GenerateMazeJob : IJob
 {
-    public int Length;
     public int Width;
+    public int Height;
     public int2 StartCell;
     public uint Seed;
 
@@ -21,9 +21,10 @@ public class GenerateMazeJob : IJob
 
     public void Execute()
     {
+        int verticalWallStartIdx = (this.Width - 1) * this.Height;
         Random rand = Random.CreateFromIndex(this.Seed);
 
-        NativeList<int2> na_cellStacks = new NativeList<int2>(this.Width, Allocator.Temp);
+        NativeList<int2> na_cellStacks = new NativeList<int2>(this.Height, Allocator.Temp);
         NativeArray<int2> na_neighborDirections = new NativeArray<int2>(4, Allocator.Temp);
         // left
         na_neighborDirections[0] = new int2(-1, 0);
@@ -36,12 +37,12 @@ public class GenerateMazeJob : IJob
         NativeArray<int2> na_unvisitedCells = new NativeArray<int2>(4, Allocator.Temp);
 
         int visitedCellCount = 0;
-        int totalCellCount = this.Length * this.Width;
+        int totalCellCount = this.Width * this.Height;
 
         // add start cell as the first element in the stack
         na_cellStacks.Add(in this.StartCell);
         // set start cell to visited
-        this.na_CellStates[MazeUtil.FlattenIndex(this.StartCell, this.Length)] = true;
+        this.na_CellStates[MazeUtil.FlattenIndex(this.StartCell, this.Width)] = true;
 
         while (visitedCellCount < totalCellCount)
         {
@@ -55,12 +56,12 @@ public class GenerateMazeJob : IJob
 
                 // ignore if out of bounds
                 if (
-                    neighborCell.x < 0 || neighborCell.y < 0 ||
-                    neighborCell.x >= this.Length || neighborCell.y >= this.Length
+                    math.any(neighborCell < 0) ||
+                    math.any(neighborCell >= this.Width)
                 ) continue;
 
                 // if not visisted, increment count and add to the array
-                if (!this.na_CellStates[MazeUtil.FlattenIndex(neighborCell, this.Length)])
+                if (!this.na_CellStates[MazeUtil.FlattenIndex(neighborCell, this.Width)])
                 {
                     na_unvisitedCells[unvisitedCellCount++] = neighborCell;
                 }
@@ -73,8 +74,22 @@ public class GenerateMazeJob : IJob
                 int2 unvisitedCell = na_unvisitedCells[unvisitedCellIdx];
                 na_cellStacks.Add(in unvisitedCell);
 
-                this.na_CellStates[MazeUtil.FlattenIndex(unvisitedCell, this.Length)] = true;
-                // TODO: break a wall here
+                this.na_CellStates[MazeUtil.FlattenIndex(unvisitedCell, this.Width)] = true;
+
+                int2 direction = unvisitedCell - currCell;
+                int2 minCell = math.min(unvisitedCell, currCell);
+                // break a wall
+                // left or right
+                if (direction.x != 0)
+                {
+                    int wallIdx = minCell.x + minCell.y * this.Width;
+                    this.na_WallStates[wallIdx] = true;
+                } else // up or down
+                {
+                    int wallIdx = minCell.x + minCell.y * this.Width;
+                    wallIdx += verticalWallStartIdx;
+                    this.na_WallStates[wallIdx] = true;
+                }
 
                 visitedCellCount++;
             } else // else, we back track
