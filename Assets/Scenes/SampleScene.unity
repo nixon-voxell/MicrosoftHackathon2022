@@ -169,6 +169,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Width: 10
   Height: 10
+  TilePrefab: {fileID: 6879677163531637546, guid: dfff3913e6db8c84da097fb371bb06f2,
+    type: 3}
+  WallPrefab: {fileID: 1956055151491582260, guid: 19ada62566c64a048ae24f1e3aa153a9,
+    type: 3}
 --- !u!1 &330585543
 GameObject:
   m_ObjectHideFlags: 0

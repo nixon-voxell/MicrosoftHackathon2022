@@ -7,9 +7,9 @@ public static class MazeUtil
 {
     [BurstCompile]
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int FlattenIndex(int x, int y, int length)
+    public static int FlattenIndex(int x, int y, int width)
     {
-        return x + y * length;
+        return x + y * width;
     }
 
     [BurstCompile]

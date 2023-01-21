@@ -46,7 +46,6 @@ public struct GenerateMazeJob : IJob
 
         while (visitedCellCount < totalCellCount)
         {
-            // UnityEngine.Debug.Log(na_cellStacks.Length);
             int2 currCell = na_cellStacks.LastElement();
 
             // check for neighbors to see if there are any unvisited cells
@@ -80,12 +79,12 @@ public struct GenerateMazeJob : IJob
                 int2 direction = unvisitedCell - currCell;
                 int2 minCell = math.min(unvisitedCell, currCell);
                 // break a wall
-                // left or right
+                // horizontal walls
                 if (direction.x != 0)
                 {
                     int wallIdx = minCell.x + minCell.y * this.Width;
                     this.na_WallStates[wallIdx] = true;
-                } else // up or down
+                } else // vertical walls
                 {
                     int wallIdx = minCell.x + minCell.y * this.Width;
                     wallIdx += verticalWallStartIdx;
@@ -95,7 +94,6 @@ public struct GenerateMazeJob : IJob
                 visitedCellCount++;
             } else // else, we back track
             {
-                UnityEngine.Debug.Log("Pop");
                 na_cellStacks.Pop();
             }
         }
