@@ -14,24 +14,24 @@ public struct MazeWall : System.IEquatable<MazeWall>
     public bool Equals(MazeWall otherWall)
     {
         return (
-            this.Cell0.Equals(otherWall.Cell0) && this.Cell1.Equals(otherWall.Cell1) ||
-            this.Cell0.Equals(otherWall.Cell1) && this.Cell1.Equals(otherWall.Cell0)
+            math.all(this.Cell0 == otherWall.Cell0) && math.all(this.Cell1 == otherWall.Cell1) ||
+            math.all(this.Cell0 == otherWall.Cell1) && math.all(this.Cell1 == otherWall.Cell0)
         );
     }
 
     public static bool operator ==(MazeWall wall0, MazeWall wall1)
     {
         return (
-            wall0.Cell0.Equals(wall1.Cell0) && wall0.Cell1.Equals(wall1.Cell1) ||
-            wall0.Cell0.Equals(wall1.Cell1) && wall0.Cell1.Equals(wall1.Cell0)
+            math.all(wall0.Cell0 == wall1.Cell0) && math.all(wall0.Cell1 == wall1.Cell1) ||
+            math.all(wall0.Cell0 == wall1.Cell1) && math.all(wall0.Cell1 == wall1.Cell0)
         );
     }
 
     public static bool operator !=(MazeWall wall0, MazeWall wall1)
     {
-        return !(
-            wall0.Cell0.Equals(wall1.Cell0) && wall0.Cell1.Equals(wall1.Cell1) ||
-            wall0.Cell0.Equals(wall1.Cell1) && wall0.Cell1.Equals(wall1.Cell0)
+        return (
+            math.all(wall0.Cell0 == wall1.Cell0) && math.all(wall0.Cell1 == wall1.Cell1) ||
+            math.all(wall0.Cell0 == wall1.Cell1) && math.all(wall0.Cell1 == wall1.Cell0)
         );
     }
 
@@ -41,8 +41,8 @@ public struct MazeWall : System.IEquatable<MazeWall>
 
         MazeWall otherWall = (MazeWall)obj;
         return (
-            this.Cell0.Equals(otherWall.Cell0) && this.Cell1.Equals(otherWall.Cell1) ||
-            this.Cell0.Equals(otherWall.Cell1) && this.Cell1.Equals(otherWall.Cell0)
+            math.all(this.Cell0 == otherWall.Cell0) && math.all(this.Cell1 == otherWall.Cell1) ||
+            math.all(this.Cell0 == otherWall.Cell1) && math.all(this.Cell1 == otherWall.Cell0)
         );
     }
 
